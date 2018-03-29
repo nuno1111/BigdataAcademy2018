@@ -1,33 +1,33 @@
-install.packages("keras")
+# install.packages("keras")
 library(keras)
 
-# python keras í™˜ê²½ ì„¤ì¹˜ : íŒŒì´ì¬ ì„¤ì¹˜ ë° keras ê´€ë ¨ íŒ¨í‚¤ì§€ ëª¨ë‘ ì„¤ì¹˜
-install_keras()
+# python keras È¯°æ ¼³Ä¡ : ÆÄÀÌ½ã ¼³Ä¡ ¹× keras °ü·Ã ÆĞÅ°Áö ¸ğµÎ ¼³Ä¡
+# install_keras()
 
 # --------------------------------------------------------------------------------------------------------------
-# ë°ì´í„°
+# µ¥ÀÌÅÍ
 # --------------------------------------------------------------------------------------------------------------
-# 28 * 28 grayscale image 7ë§Œì¥, 0 ~ 9ê¹Œì§€ì˜ í•„ê¸°ì²´ ì´ë¯¸ì§€
+# 28 * 28 grayscale image 7¸¸Àå, 0 ~ 9±îÁöÀÇ ÇÊ±âÃ¼ ÀÌ¹ÌÁö
 mnist <- dataset_mnist()
 
-# í•™ìŠµ ë°ì´í„° ì„¤ì •(train : 6ë§Œì¥, test : 1ë§Œì¥)
-# ì´ë¯¸ì§€ë³„ X ë°ì´í„°(í”½ì…€ ê°’)
+# ÇĞ½À µ¥ÀÌÅÍ ¼³Á¤(train : 6¸¸Àå, test : 1¸¸Àå)
+# ÀÌ¹ÌÁöº° X µ¥ÀÌÅÍ(ÇÈ¼¿ °ª)
 x_train <- mnist$train$x 
 x_test  <- mnist$test$x
 
-# reshape : ê°œë³„ ì´ë¯¸ì§€ 28 * 28ì„ 1ì°¨ì›ìœ¼ë¡œ 784ê°œ
+# reshape : °³º° ÀÌ¹ÌÁö 28 * 28À» 1Â÷¿øÀ¸·Î 784°³
 dim(x_train) <- c(nrow(x_train), 784)
 dim(x_test)  <- c(nrow(x_test), 784)
 
-# rescale : 0 ~ 1 ì‚¬ì´ì˜ ê°’ì„ ê°–ë„ë¡, í”½ì…€ ê°’ì˜ ë²”ìœ„ 0 ~ 255
+# rescale : 0 ~ 1 »çÀÌÀÇ °ªÀ» °®µµ·Ï, ÇÈ¼¿ °ªÀÇ ¹üÀ§ 0 ~ 255
 x_train <- x_train / 255
 x_test  <- x_test / 255
 
 
 # --------------------------------------------------------------------------------------------------------------
-# ëª¨ë¸ë§
+# ¸ğµ¨¸µ
 # --------------------------------------------------------------------------------------------------------------
-# 0) ë…¸ë“œ ê°œìˆ˜
+# 0) ³ëµå °³¼ö
 num_input    <- 784
 num_hidden_1 <- 256
 num_hidden_2 <- 128
@@ -44,10 +44,10 @@ decoded_layer1 <- layer_dense(encoded_layer2, num_hidden_1, activation = "sigmoi
 decoded_layer2 <- layer_dense(decoded_layer1, num_input, activation = "sigmoid")
 
 
-# model ì •ì˜
+# model Á¤ÀÇ
 autoencoder <- keras_model(input_img, decoded_layer2)
 
-# loss function ë° ìµœì í™”ë°©ë²• ì„¤ì •
+# loss function ¹× ÃÖÀûÈ­¹æ¹ı ¼³Á¤
 autoencoder %>% compile(loss = "mse",
                         optimizer = optimizer_rmsprop(lr = 0.01), 
                         metrics = c('accuracy'))
@@ -58,18 +58,18 @@ autoencoder %>% fit(x_train, x_train,
                     batch_size = 256,
                     shuffle = TRUE,
                     validation_split = 0.2)
-                        
+
 # --------------------------------------------------------------------------------------------------------------
-# ê²°ê³¼ ì‹œê°í™”
+# °á°ú ½Ã°¢È­
 # --------------------------------------------------------------------------------------------------------------
-# n * n ê°œì˜ random ì´ë¯¸ì§€ ì‹œê°í™”(ë¬´ì‘ìœ„ë¡œ ì¶”ì¶œ)
-n   <- 4
+# n * n °³ÀÇ random ÀÌ¹ÌÁö ½Ã°¢È­(¹«ÀÛÀ§·Î ÃßÃâ)
+n   <- 5
 idx <- sample(1:nrow(x_test), n^2, replace = FALSE)
 
-# test ì›ë³¸ ì´ë¯¸ì§€
+# test ¿øº» ÀÌ¹ÌÁö
 win.graph()
 par(mfcol = c(n, n)) # n * n
-par(mar = c(0, 0, 0, 0), xaxs='i', yaxs='i') # ê°„ê²© 0
+par(mar = c(0, 0, 0, 0), xaxs='i', yaxs='i') # °£°İ 0
 
 for(i in idx)
 { 
@@ -78,7 +78,7 @@ for(i in idx)
   image(1:28, 1:28, im, col=gray((0:255)/255), xaxt='n')
 }
 
-# autoencoder ê²°ê³¼ ì´ë¯¸ì§€
+# autoencoder °á°ú ÀÌ¹ÌÁö
 result      <- autoencoder %>% predict(x_test[idx,])
 dim(result) <- c(n^2, 28, 28)
 
