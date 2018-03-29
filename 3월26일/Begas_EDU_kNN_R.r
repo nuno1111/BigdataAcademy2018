@@ -12,7 +12,7 @@
 #============================================================
 
 # 데이터 입력
-credit_df <- read.csv("credit.csv")
+credit_df <- read.csv("3월26일/credit.csv")
 head(credit_df)
 
 # 데이터 분할을 위한 seed 고정
@@ -54,3 +54,4 @@ knn_model <- knn(train = tr_x_df, test = ts_x_df, cl = tr_y_df, k = optimal.k)
 table(knn_model, ts_y_df)
 # Test 정확도 계산
 sum(diag(table(knn_model, ts_y_df))) / length(ts_y_df)
+

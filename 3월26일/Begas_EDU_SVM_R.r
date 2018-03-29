@@ -6,7 +6,7 @@
 #============================================================
 
 ###### 데이터 불러 오기
-ukm_df <- read.csv("ukm.csv")  # csv 파일 읽기
+ukm_df <- read.csv("3월26일/ukm.csv")  # csv 파일 읽기
 head(ukm_df, 5)   # Data의 첫 5번째 줄 까지 보기
 
 ###### 데이터 분할
@@ -16,6 +16,7 @@ train_df <- ukm_df[idx, ]  # training set 분할
 test_df <- ukm_df[-idx, ]  # test set 분할
 
 ###### 기본적인 분석
+# install.packages("e1071")
 library(e1071)  # library 불러오기
 fit.svm.linear <- svm(UNS~., data=train_df, kernel = "linear")  # svm 모형 생성
 fit.svm.linear  # 모형 결과 출력

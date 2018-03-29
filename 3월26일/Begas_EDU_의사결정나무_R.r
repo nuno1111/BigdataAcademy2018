@@ -1,5 +1,5 @@
 #============================================================
-# title: "ÀÇ»ç°áÁ¤³ª¹«"
+# title: "ì˜ì‚¬ê²°ì •ë‚˜ë¬´"
 # subtitle: "Decision Tree"
 # author: "Begas"
 # date: "2018"
@@ -11,8 +11,8 @@
 #install.packages("C50")
 #install.packages("party")
 
-#¿¹Á¦µ¥ÀÌÅÍ
-tree_data <- read.csv("tree.csv")
+#ì˜ˆì œë°ì´í„°
+tree_data <- read.csv("3ì›”26ì¼/tree.csv")
 head(tree_data)
 
 #Training set 70% , Test set 30%
@@ -26,39 +26,40 @@ dim(test)
 #tree
 library(tree)
 tree_ml<-tree(UNS~., data=train, split="deviance")
+# tree_ml<-tree(UNS~., data=train, split="gini")
 tree_ml
 plot(tree_ml)
 text(tree_ml)
 summary(tree_ml)
 
-#tree °¡ÁöÄ¡±â (³ëµå¼ö·Î)
+#tree ê°€ì§€ì¹˜ê¸° (ë…¸ë“œìˆ˜ë¡œ)
 tree_p <- snip.tree(tree_ml, nodes=c(10))
 plot(tree_p)
 text(tree_p, all=T)
 
-#tree °¡ÁöÄ¡±â (³¡¸¶µğ¼ö·Î)
+#tree ê°€ì§€ì¹˜ê¸° (ëë§ˆë””ìˆ˜ë¡œ)
 tree_p2 <- prune.misclass(tree_ml)
 plot(tree_p2)
 fin.tr  <- prune.misclass(tree_ml, best=6)
 plot(fin.tr)
 text(fin.tr)
 
-#Tree °¡ÁöÄ¡±â ºñ±³
+#Tree ê°€ì§€ì¹˜ê¸° ë¹„êµ
 par(mfrow=c(2,2))
 plot(tree_p2)
-plot(tree_ml, main="raw tree"); text(tree_ml,cex=0.7) #°¡ÁöÄ¡±â ¾ÈÇÑ Tree
-plot(tree_p, main="prune by number of nodes"); text(tree_p, all=T, cex=0.7)  #node¼ö·Î °¡ÁöÄ¡±âÇÑ Tree
-plot(fin.tr, main="prune by number of Terminal nodes"); text(fin.tr, cex=0.7)  #³¡¸¶µğ¼ö·Î °¡ÁöÄ¡±âÇÑ Tree
+plot(tree_ml, main="raw tree"); text(tree_ml,cex=0.7) #ê°€ì§€ì¹˜ê¸° ì•ˆí•œ Tree
+plot(tree_p, main="prune by number of nodes"); text(tree_p, all=T, cex=0.7)  #nodeìˆ˜ë¡œ ê°€ì§€ì¹˜ê¸°í•œ Tree
+plot(fin.tr, main="prune by number of Terminal nodes"); text(fin.tr, cex=0.7)  #ëë§ˆë””ìˆ˜ë¡œ ê°€ì§€ì¹˜ê¸°í•œ Tree
 
 
-#tree ¿¹Ãø
+#tree ì˜ˆì¸¡
 yhat  <- predict(fin.tr, newdata=test, type="class")
 ytest <- test[,6]
 table(yhat,ytest)
-cat("¿ÀºĞ·ùÀ² = ",sum(yhat!=ytest)/length(yhat),"%")
+cat("ì˜¤ë¶„ë¥˜ìœ¨ = ",sum(yhat!=ytest)/length(yhat),"%")
 
 
-#°ø°£ºĞÇÒ
+#ê³µê°„ë¶„í• 
 par(pty="s")
 plot(train[,4], train[,5], type="n", xlab="LPR", ylab="PEG")
 text(train[,4], train[,5],col="dodgerblue",c("H","L","M","VL")[train[,6]])
@@ -75,28 +76,28 @@ cart_ml
 plot(cart_ml)
 text(cart_ml, all=T)
 
-#CART - ½Ã°¢ÀûÀÎ ±×·¡ÇÁ
+#CART - ì‹œê°ì ì¸ ê·¸ë˜í”„
 prp(cart_ml, type=4, extra=1, digits=3)
 
-#CART - ¿¹Ãø
+#CART - ì˜ˆì¸¡
 yhat  <- predict(cart_ml, newdata=test, type="class")
 ytest <- test[,6]
 table(yhat,ytest)
-cat("¿ÀºĞ·ùÀ² = ",sum(yhat!=ytest)/length(yhat),"%")
+cat("ì˜¤ë¶„ë¥˜ìœ¨ = ",sum(yhat!=ytest)/length(yhat),"%")
 
 
-#C 5.0
+#C5.0
 library(C50)
 
 c5_ml  <- C5.0(UNS ~.,train)
 summary(c5_ml)
 plot(c5_ml)
 
-#C 5.0 - ¿¹Ãø
+#C5.0 - ì˜ˆì¸¡
 yhat  <- predict(c5_ml, newdata=test, type="class")
 ytest <- test[,6]
 table(yhat,ytest)
-cat("¿ÀºĞ·ùÀ² = ",sum(yhat!=ytest)/length(yhat),"%")
+cat("ì˜¤ë¶„ë¥˜ìœ¨ = ",sum(yhat!=ytest)/length(yhat),"%")
 
 
 #QUESET
@@ -106,10 +107,10 @@ queset_ml <- ctree(UNS ~., train, controls = ctree_control(testtype=c("Bonferron
 summary(queset_ml)
 plot(queset_ml)
 
-#QUESET - ¿¹Ãø
+#QUESET - ì˜ˆì¸¡
 yhat  <- predict(queset_ml, newdata=test, type="response")
 ytest <- test[,6]
 table(yhat,ytest)
-cat("¿ÀºĞ·ùÀ² = ",sum(yhat!=ytest)/length(yhat),"%")
+cat("ì˜¤ë¶„ë¥˜ìœ¨ = ",sum(yhat!=ytest) / length(yhat), "%")
 
 

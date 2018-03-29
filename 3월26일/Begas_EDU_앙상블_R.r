@@ -1,5 +1,5 @@
 #============================================================
-# title: "¾Ó»óºí"
+# title: "ì•™ìƒë¸”"
 # subtitle: "Ensemble"
 # author: "Begas"
 # date: "2018"
@@ -9,11 +9,11 @@
 #install.packages('gbm')
 #install.packages("randomForest")
 
-#¿¹Á¦µ¥ÀÌÅÍ
-en_data <- read.csv("tree.csv")
+#ì˜ˆì œë°ì´í„°
+en_data <- read.csv("3ì›”26ì¼/tree.csv")
 head(en_data)
 
-#train/ test ³ª´©±â
+#train/ test ë‚˜ëˆ„ê¸°
 set.seed(123)
 sample.num  <- sample(1:nrow(en_data), 0.7*nrow(en_data))
 train       <- en_data[sample.num,]
@@ -26,17 +26,17 @@ y.test <- test[,6]
 #Bagging
 library(ipred)
 fit.bagg <- ipredbagg(as.factor(y.train), x.train, data=train, nbagg=1000)  
-#bootstrapÀÇ °³¼ö´Â ÃæºĞÈ÷ Å©°Ô ÇÏ´Â°ÍÀÌ ÁÁ´Ù.
+#bootstrapì˜ ê°œìˆ˜ëŠ” ì¶©ë¶„íˆ í¬ê²Œ í•˜ëŠ”ê²ƒì´ ì¢‹ë‹¤.
 fit.bagg
 
-#¿¹Ãø
+#ì˜ˆì¸¡
 pred<-predict(fit.bagg,x.test)
 table(pred,y.test)
 
-#¿ÀºĞ·ùÀ²
+#ì˜¤ë¶„ë¥˜ìœ¨
 mean(pred!=y.test)
 
-#È®·ü¿¹Ãø
+#í™•ë¥ ì˜ˆì¸¡
 pred2<-predict(fit.bagg,x.test,type="prob")
 head(pred2)
 
@@ -46,30 +46,30 @@ library(gbm)
 fit.boost <- gbm(as.factor(UNS)~.,data=train,distribution="multinomial",n.trees=1000)
 fit.boost
 
-#¿¹Ãø
-pred.prob<-predict(fit.boost,x.test,type="response",n.trees=1000)  #È®·ü·Î ³ª¿È
-pred.prob=matrix(pred.prob,ncol=4)                                 #4°¡Áö ¹üÁÖÀÇ È®·ü
+#ì˜ˆì¸¡
+pred.prob<-predict(fit.boost,x.test,type="response",n.trees=1000)  #í™•ë¥ ë¡œ ë‚˜ì˜´
+pred.prob=matrix(pred.prob,ncol=4)                                 #4ê°€ì§€ ë²”ì£¼ì˜ í™•ë¥ 
 
-#È®·ü¿¹Ãø
+#í™•ë¥ ì˜ˆì¸¡
 colnames(pred.prob) <- levels(y.train)
 head(pred.prob)
 
-#4°¡Áö ¹üÁÖÁß¿¡ °¡Àå ³ôÀº È®·üÀ» °¡Áø ¹üÁÖ·Î ºĞ·ù
+#4ê°€ì§€ ë²”ì£¼ì¤‘ì— ê°€ì¥ ë†’ì€ í™•ë¥ ì„ ê°€ì§„ ë²”ì£¼ë¡œ ë¶„ë¥˜
 pred<-apply(pred.prob,1,which.max)
 pred<-ifelse(pred==1,"High",ifelse(pred==2,"Low",ifelse(pred==3,"Middle","very_low")))
 table(pred,y.test)
 
-#¿ÀºĞ·ùÀ²
+#ì˜¤ë¶„ë¥˜ìœ¨
 mean(pred!=y.test)
 
-#Boosting È½¼ö M Á¤ÇÏ±â
+#Boosting íšŸìˆ˜ M ì •í•˜ê¸°
 find_M <- function(m){
-    fit.boost <- gbm(as.factor(UNS)~.,data=train,distribution="multinomial",n.trees=m)
-    pred.prob<-predict(fit.boost,x.test,type="response",n.trees=m)  #È®·ü·Î ³ª¿È
-    pred.prob=matrix(pred.prob,ncol=4)
-    pred<-apply(pred.prob,1,which.max)
-    pred<-ifelse(pred==1,"High",ifelse(pred==2,"Low",ifelse(pred==3,"Middle","very_low")))
-    print(mean(pred!=y.test))
+  fit.boost <- gbm(as.factor(UNS)~.,data=train,distribution="multinomial",n.trees=m)
+  pred.prob<-predict(fit.boost,x.test,type="response",n.trees=m)  #í™•ë¥ ë¡œ ë‚˜ì˜´
+  pred.prob=matrix(pred.prob,ncol=4)
+  pred<-apply(pred.prob,1,which.max)
+  pred<-ifelse(pred==1,"High",ifelse(pred==2,"Low",ifelse(pred==3,"Middle","very_low")))
+  print(mean(pred!=y.test))
 }
 
 find_M(50)
@@ -82,24 +82,24 @@ find_M(10000)
 
 #Random Forest
 library(randomForest)
-fit.rf <- randomForest(as.factor(UNS)~.,data=train, ntree=1000, mtry=3)   #º¯¼ö¼±ÅÃ k¸¦ 3·Î ¼³Á¤
+fit.rf <- randomForest(as.factor(UNS)~.,data=train, ntree=1000, mtry=3)   #ë³€ìˆ˜ì„ íƒ kë¥¼ 3ë¡œ ì„¤ì •
 
-#¿¹Ãø
+#ì˜ˆì¸¡
 pred<-predict(fit.rf,x.test)
 table(pred,y.test)
 
-#¿ÀºĞ·ùÀ²
+#ì˜¤ë¶„ë¥˜ìœ¨
 mean(pred!=y.test)
 
-#random Forest¿¡¼­ kÁ¤ÇÏ±â
+#random Forestì—ì„œ kì •í•˜ê¸°
 MAPE <- NULL
 for(i in 1:ncol(x.train)){
-    temp_rf <- randomForest(as.factor(UNS)~.,data=train, ntree=1000, mtry=i)  
-    pred <- predict(temp_rf,x.test)
-    MAPE[i] <- mean(pred!=y.test)
+  temp_rf <- randomForest(as.factor(UNS)~.,data=train, ntree=1000, mtry=i)  
+  pred <- predict(temp_rf,x.test)
+  MAPE[i] <- mean(pred!=y.test)
 }
 round(MAPE,2)
-plot(x=seq(1,ncol(x.train)),y=MAPE,type="l",xlab="º¯¼ö°³¼ö")
+plot(x=seq(1,ncol(x.train)),y=MAPE,type="l",xlab="ë³€ìˆ˜ê°œìˆ˜")
 
 
 

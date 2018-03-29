@@ -1,7 +1,7 @@
 
 library(e1071)
 
-iris <- read.csv('Iris_1.csv')
+iris <- read.csv('3월26일/Iris_1.csv')
 head(iris)
 
 # training data: 70% / test data : 30%
@@ -19,7 +19,7 @@ head(pred_1)
 
 table(pred_1, iris$Species[te.index])
 
-exercise <- read.csv('exercise.csv')
+exercise <- read.csv('3월26일/exercise.csv')
 head(exercise)
 
 model_1 <- naiveBayes(운동여부 ~ ., data = exercise)
