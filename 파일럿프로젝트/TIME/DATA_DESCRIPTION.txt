@@ -1,0 +1,56 @@
+* 구분자 : "|"
+* 특이사항1 : 유동인구 추정과정에서 비율을 사용하여 유동인구 수가 소수점으로 표현됨
+* 특이사항2 : 유동인구는 단위지역에서 이동이 있는 개념으로 인구수와 달리 중복 카운트가 발생함
+
+* 파일명 : 시간대별_관광객_300그리드단위_유동인구_비율포함_YYYYMM.txt
+* 필드설명
+STD_YM : 기준년월
+ID_300 : 300m 격자 ID (300m 격자 GIS 파일 참조)
+FLOW_POP_CNT_00TMST : 00시~01시 유동인구
+FLOW_POP_CNT_01TMST : 01시~02시 유동인구
+FLOW_POP_CNT_02TMST : 02시~03시 유동인구
+FLOW_POP_CNT_03TMST : 03시~04시 유동인구
+FLOW_POP_CNT_04TMST : 04시~05시 유동인구
+FLOW_POP_CNT_05TMST : 05시~06시 유동인구
+FLOW_POP_CNT_06TMST : 06시~07시 유동인구
+FLOW_POP_CNT_07TMST : 07시~08시 유동인구
+FLOW_POP_CNT_08TMST : 08시~09시 유동인구
+FLOW_POP_CNT_09TMST : 09시~10시 유동인구
+FLOW_POP_CNT_10TMST : 10시~11시 유동인구
+FLOW_POP_CNT_11TMST : 11시~12시 유동인구
+FLOW_POP_CNT_12TMST : 12시~13시 유동인구
+FLOW_POP_CNT_13TMST : 13시~14시 유동인구
+FLOW_POP_CNT_14TMST : 14시~15시 유동인구
+FLOW_POP_CNT_15TMST : 15시~16시 유동인구
+FLOW_POP_CNT_16TMST : 16시~17시 유동인구
+FLOW_POP_CNT_17TMST : 17시~18시 유동인구
+FLOW_POP_CNT_18TMST : 18시~19시 유동인구
+FLOW_POP_CNT_19TMST : 19시~20시 유동인구
+FLOW_POP_CNT_20TMST : 20시~21시 유동인구
+FLOW_POP_CNT_21TMST : 21시~22시 유동인구
+FLOW_POP_CNT_22TMST : 22시~23시 유동인구
+FLOW_POP_CNT_23TMST : 23시~00시 유동인구
+TMST00_PROP : 00시~01시 유동인구 비율
+TMST01_PROP : 01시~02시 유동인구 비율
+TMST02_PROP : 02시~03시 유동인구 비율
+TMST03_PROP : 03시~04시 유동인구 비율
+TMST04_PROP : 04시~05시 유동인구 비율
+TMST05_PROP : 05시~06시 유동인구 비율
+TMST06_PROP : 06시~07시 유동인구 비율
+TMST07_PROP : 07시~08시 유동인구 비율
+TMST08_PROP : 08시~09시 유동인구 비율
+TMST09_PROP : 09시~10시 유동인구 비율
+TMST10_PROP : 10시~11시 유동인구 비율
+TMST11_PROP : 11시~12시 유동인구 비율
+TMST12_PROP : 12시~13시 유동인구 비율
+TMST13_PROP : 13시~14시 유동인구 비율
+TMST14_PROP : 14시~15시 유동인구 비율
+TMST15_PROP : 15시~16시 유동인구 비율
+TMST16_PROP : 16시~17시 유동인구 비율
+TMST17_PROP : 17시~18시 유동인구 비율
+TMST18_PROP : 18시~19시 유동인구 비율
+TMST19_PROP : 19시~20시 유동인구 비율
+TMST20_PROP : 20시~21시 유동인구 비율
+TMST21_PROP : 21시~22시 유동인구 비율
+TMST22_PROP : 22시~23시 유동인구 비율
+TMST23_PROP : 23시~00시 유동인구 비율
