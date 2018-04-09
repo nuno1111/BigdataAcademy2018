@@ -53,9 +53,8 @@ x11(width = 40,height = 20);for ( yyyymm  in yyyymm_vec){
     
     # qtm(lnd_tmp, "Value")
     title <- paste(substr(yyyymm,1,4),"년",substr(yyyymm,5,6),"월",hour,"시")
-    par("usr")
     
-    plot(lnd_tmp_2 , col = rgb(255,216,216,maxColorValue = 255), main=title, xlim=c(874217.8, 951017.8), ylim=c(1464669.9, 1508469.9),gridded=T)
+    plot(lnd_tmp_2 , col = rgb(255,216,216,maxColorValue = 255), main=title, xlim=c(874217.8, 951017.8), ylim=c(1464669.9, 1508469.9))
     plot(lnd_tmp_3, add = T, col = rgb(255,167,167,maxColorValue = 255))
     plot(lnd_tmp_4, add = T, col = rgb(241,95,95,maxColorValue = 255))
     plot(lnd_tmp_5, add = T, col = rgb(204,51,51,maxColorValue = 255))
