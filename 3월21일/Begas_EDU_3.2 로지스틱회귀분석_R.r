@@ -14,7 +14,7 @@ plot(function(x) dnorm(x), -4 , 4)
 #============================================================
 
 # 남미의 심장병 발생 확률이 높은 지역의 남성에 대한 retrospective study를 한 데이터
-
+# install.packages("ElemStatLearn")
 library(ElemStatLearn)
 data(SAheart)
 heart <- SAheart[,c(2,5,8:10)]
@@ -65,9 +65,12 @@ round(coef(summary(new_heartfit)), 3)[, 1]
 # 모형 평가
 #============================================================
 heartfit$aic
+
 # cut-off가 0.7기준일 경우
 y.pred1 = ifelse(heartfit$fitted.values > .7, 1, 0)
+
 table(heart$chd, y.pred1)
+
 # 정분류율
 round(mean(heart$chd == y.pred1),2)
 
@@ -94,16 +97,7 @@ train <- SAheart[-indexes,]
 nrow(test)
 
 fit_rs <- predict(heartfit, newdata = SAheart[,-10], type="response")
-
 fit_rs
-
-
-
-
-
-
-
-
 
 
 #===========================================================

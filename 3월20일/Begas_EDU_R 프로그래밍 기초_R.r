@@ -25,8 +25,8 @@ head(iris,10)
 tail(iris)
 tail(iris,10)
 
-#cat 함수는 print의 대안으로 여려 개의 항목을 묶어서 연결된 결과를 출력해 줌
-#줄을 끝내려면 꼭 줄 바꿈 문자(\n)을 넣어야 함
+# cat 함수는 print의 대안으로 여려 개의 항목을 묶어서 연결된 결과를 출력해 줌
+# 줄을 끝내려면 꼭 줄 바꿈 문자(\n)을 넣어야 함
 
 cat('Cat 함수 예제 : 1더기 5의 값은 ? ', 1+5, '\n')
 cat('오늘의 날짜는 ? ', date(), '\n')
@@ -52,6 +52,7 @@ rm(x)  #x변수 삭제
 rm(list = ls()) #오브젝트 내의 모든 변수 삭제
 
 gc() # 메모리 확인 변수
+gcinfo(TRUE)
 
 x <- 10
 cat("x: ", x, "\n")
@@ -74,7 +75,7 @@ cat("c: ", c, "\n")
 d <- c(y, a)
 cat("d: ", d, "\n")
 
-# 데이터타입 강제형변환 우선순위 
+# 데이터타입 강제형변환 우선순위
 c(T, 1) # bool < num
 c(1, 1i) # num < complex
 c(1i, "one") # complex < string
@@ -102,15 +103,16 @@ system.time(DF2 <- read.table('test_1.csv', header=TRUE, sep=',', quote='',
 DF2
 
 #CSV 파일 가져오기 예시 3 : data.table::fread()로 csv file import.
+#install.packages("data.table")
 library(data.table)
 cat(paste0(rep("=",10), collapse = "="), "data.table::fread()", paste0(rep("=",10), collapse = "="),"\n")
-system.time(DT1 <- fread('test.csv'))
+system.time(DT1 <- fread('test_1.csv'))
 
 
 #CSV 파일 가져오기 예시 4: sqldf::read.csv.sql()로 csv file import
 library(sqldf)
 cat(paste0(rep("=",10), collapse = "="), "read.csv.sql()", paste0(rep("=",10), collapse = "="),"\n")
-system.time(SQLDF <- read.csv.sql('test.csv', dbname=NULL))
+system.time(SQLDF <- read.csv.sql('test_1.csv', dbname=NULL))
 
 #Sample Data 생성
 n <- 1e6
@@ -121,6 +123,7 @@ DT <- data.frame(a=sample(1:1000, n, replace=TRUE),
                  e=rnorm(n),
                  f=sample(1:1000, n, replace=TRUE))
 summary(DT)
+
 
 # CSV 파일로 저장하기 예시 1
 write.table(DT, 'test_1.csv', sep=',', row.names=FALSE, quote=FALSE)
@@ -174,7 +177,7 @@ v1 * v2   #벡터의 각 원소간 곱셈
 #행렬을 생성하기 위해서는 matrix() 함수를 사용
 #matrix() 함수 이외에 cbind(), rbind(), dim() 등을 이용하여 행렬을 생성시킬 수 있음
 
-matrix(1:9, nrow=3)                                    #nrow  : 행의 개수 지정
+matrix(1:9, nrow=3)                                    #nrow : 행의 개수 지정
 matrix(c(1, 4, 7, 2, 5, 8, 3, 6, 9), byrow=T, ncol=3)  #ncol : 열의 개수 지정 byrow=T : 행 기준 행렬을 생성
 
 r1 <- c(1, 4, 7)                                       #r1, r2, r3 행 벡터 생성
@@ -182,7 +185,7 @@ r2 <- c(2, 5, 8)
 r3 <- c(3, 6, 9)
 
 rbind(r1, r2, r3)                                      #rbind : 행을 기준으로 결합
-cbind(r1, r2, r3)                                      #cbind : 열을 기준으로 결합
+t <- cbind(r1, r2, r3)                                      #cbind : 열을 기준으로 결합
 
 m1 <- 1:9
 dim(m1) <- c(3, 3)
@@ -310,7 +313,7 @@ B <- matrix(c(2, 2, 2, 2), ncol=2)
 A^B #행렬변수의 제곱(각 구성 요소들간의 제곱)
 
 #%/% : 나눗셈에서 몫만 출력함
-4 %/% 2 
+5 %/% 2 
 x <- 3
 y <- 2
 x %/% y #1.5의 정수부분인 1만 출력
@@ -327,7 +330,7 @@ A %/% B #행렬변수의 정수나눗셈
 A <- matrix(c(5, 10, 2, 1), ncol=2)
 B <- matrix(c(3, 4, 5, 6), ncol=2)
 #(5*3) + (2*4) ; (5*5) + (2*6) ; (10*3) + (1*4) ; (10*5) + (1*6)
-A %*% B
+A %*% B # A*B 는 각 항목간 곱셈
 
 # '==' 비교되는 두 항이 같은지를 비교함. 같을 경우 True, 다를 경우 False
 1 == 2
@@ -456,13 +459,11 @@ cbind(aa, bb)
 tmp_df <- data.frame(AA = c(1:5), BB = letters[1:5])
 cbind(tmp_df, aa)
 
-#행을 합치기 위해서는 rbind함수를 사용
-#단, 합칠 대상의 열 개수는 동일 해야 함
-#데이터 프레임인 경우 합칠 두개의 데이터의 각각의 열의 유형이 동일해야 함
+# 행을 합치기 위해서는 rbind함수를 사용
+# 단, 합칠 대상의 열 개수는 동일 해야 함
+# 데이터 프레임인 경우 합칠 두개의 데이터의 각각의 열의 유형이 동일해야 함
 
 rbind(aa, bb)
-
-
 
 tmp_df1 <- data.frame(AA = c(1:2), BB = c('A', 'A'))
 tmp_df2 <- data.frame(AA = c(3:4), BB = c('B', 'B'))
@@ -485,8 +486,6 @@ merge(tmp1, tmp2, by = 'AA', all.y = T)
 
 #tmp3 기준으로 데이터 합치기 : outer join
 merge(tmp1, tmp2, by = 'AA', all = T)
-
-
 
 # 집단별 데이터를 분류하기 위해서는 split 함수 사용
 # 집단별로 분류된 데이터는 list 형태로 생성됨

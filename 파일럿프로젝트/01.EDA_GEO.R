@@ -11,7 +11,7 @@
 # 장소 Target Top 3
 
 # 데이터 로딩 ----
-df_time <- read.csv("./TIME/TIME_300.csv")
+df_time <- read.csv("./파일럿프로젝트/TIME/TIME_300.csv")
 
 # 데이터 탐색 
 head(df_time)
@@ -113,7 +113,7 @@ summary(df_time)
 
 # GIS 처리  ----
 library(rgdal)
-lnd <- readOGR(dsn = "./GIS", layer = "PCELL_ID_300") # GIS SHP 파일 로딩
+lnd <- readOGR(dsn = "./파일럿프로젝트/GIS", layer = "PCELL_ID_300") # GIS SHP 파일 로딩
 
 lnd_target <- lnd@data[lnd$ID_300 %in% df_time$ID_300,] # 데이터 있는 격자 찾기
 
@@ -131,4 +131,8 @@ lnd <- lnd[!is.na(lnd$ID_300),]
 # 데이터 시각화
 library(tmap) # load tmap package (see Section IV)
 lnd$X12_13_LOG <- log(lnd$X12_13+1)
-qtm(lnd, "X12_13_LOG") # plot the basic map
+qtm(lnd, "X12_13_LOG")
+
+
+
+

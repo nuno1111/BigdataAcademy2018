@@ -14,13 +14,14 @@ library(corrplot)
 # fitness 데이터(출처: JMP Software 내 예제 데이터)
 fitness <- read.csv("3월20일/fitness.csv")
 head(fitness, 3)
+summary(fitness)
 # age: 나이
 # weight: 체중
 # oxygen: 산소 소비량
 # runtime: 1마일을 뛰는데 소요된 시간
 # runpulse: 달리는 동안 평균 맥박수
 # rstpulse: 휴식기 맥박수
-# maxpulse: 달리는 동안 최대 백박수
+# maxpulse: 달리는 동안 최대 맥박수
 
 # 산점도 행렬
 panel.hist <- function(x, ...)
@@ -88,3 +89,6 @@ library(ppcor)
 round(pcor(dat)$estimate, 4)
 # ppcor package의 pcor() 함수 사용
 # 재산 통제 후 지출과 수입의 상관계수는 0.3969
+
+
+

@@ -17,6 +17,7 @@
 #데이터 수집
 onesample <- read.csv("3월20일/one.csv", header = T)
 
+
 #데이터 조회
 head(onesample)
 

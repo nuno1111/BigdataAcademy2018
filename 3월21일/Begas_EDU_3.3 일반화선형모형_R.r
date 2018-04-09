@@ -86,6 +86,7 @@ head(gala_res)
 
 # 이탈도 잔차 v.s 예측치
 gala_resi_df <- data.frame(x = predict(gala_glm, type="link"), y = residuals(gala_glm))
+
 library(ggplot2)
 ggplot(aes(x = x, y = y), data = gala_resi_df) + 
   geom_point(col="orange") + labs(x = expression(hat(eta)), y = "Deviance residuals")

@@ -19,7 +19,6 @@ head(reg_data)
 #- x1 : tv 광고비
 #- x2 : 라디오 광고비
 
-
 # 데이터 살펴보기 - **산점도**
 panel.hist <- function(x, ...)
 {
@@ -44,12 +43,12 @@ pairs(reg_data, diag.panel = panel.hist, lower.panel = panel.cor)
 
 # 데이터 살펴보기 - **Boxplot**
 library(tidyverse)
-ggplot(reg_data,aes(x="",y=y))+geom_boxplot(fill="gray80")+
-  theme_classic()
+ggplot(reg_data,aes(x="",y=y))+geom_boxplot(fill="gray80")+theme_classic()
 
 #===========================================================
 #                      단순 선형회귀분석
 #===========================================================
+
 #회귀모형 생성
 reg_model <- lm(y~x1, data=reg_data)
 reg_model
@@ -112,12 +111,17 @@ summary(reg_model)
 
 # 예측
 pre1<- predict(reg_model)
+
 reg_data$pre<-pre1
-ggplot(reg_data,aes(y,pre))+geom_point(color="gray20",size=2)+
-  geom_abline(color="red",size=1.2)+theme_classic()+
+
+ggplot(reg_data,aes(y,pre))+
+  geom_point(color="gray20",size=2)+
+  geom_abline(color="red",size=1.2)+
+  theme_classic()+
   labs(x="Observed",y="Predicted")
 
 # 잔차분석 - 독립성 (Durbin-Watson 통계량)
+if(!require(car))install.packages("car")
 library(car)
 durbinWatsonTest(reg_model)
 #- D-W 통계량 = 2에 가까울수록 오차항 독립
@@ -128,19 +132,26 @@ e <- reg_data$y-pre1
 qqnorm(e); qqline(e, col="red")
 
 # 잔차분석 - 정규성 (jarque bera)
+if(!require(tseries))install.packages("tseries")
 library(tseries)
 jarque.bera.test(resid(reg_model)) # 모델에서 잔차 뽑아내기 : resid(reg_model)
 qchisq(0.05,df=2,lower.tail=F) # 5% 유의수준의 임계값
 # X-squared = 0.38495 < 5.991465 이기 때문에 정규분포를 따른다.
 
+
+
 # 잔차분석 - 등분산성 (잔차 산점도)
-reg_data$e<- e
-ggplot(reg_data,aes(pre,e))+geom_point(color="gray20",size=2)+
-  geom_smooth(method="loess")+labs(x="Predicted",y="잔차")+
-  geom_hline(yintercept = 0, color = "red") +theme_classic()+
+reg_data$e <- e
+ggplot(reg_data,aes(pre,e)) +
+  geom_point(color="gray20",size=2) +
+  geom_smooth(method="loess") +
+  labs(x="Predicted",y="잔차") +
+  geom_hline(yintercept = 0, color = "red") +
+  theme_classic() +
   ggtitle("잔차산점도")
 
 # 잔차분석 - 등분산성 (Breusch- Pagan Test)
+if(!require(lmtest))install.packages("lmtest")
 library("lmtest")
 bptest(reg_model)
 # H0 = 등분산성이 있다. 귀무가설을 기각하므로 등분산성이 아니다.
