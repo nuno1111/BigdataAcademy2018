@@ -26,6 +26,7 @@ library(arulesViz)
 data(Adult)
 summary(Adult)
 
+
 # 지지도(support)가 0.4이상인 item들의 빈도 막대그래프
 itemFrequencyPlot(Adult, support = 0.1, main = "Item Frequency Plot above support 0.4")
 # 지지도 기준 상위 10개 item들의 빈도 막대그래프
@@ -39,7 +40,6 @@ itemFrequencyPlot(Adult, topN = 10, main = "Histogram of support top 10 items")
 rules <- apriori(Adult, parameter = list(support = 0.1))
 summary(rules)
 inspect(rules)
-
 
 # 지지도가 0.4이상이면서 향상도가 1.3 이상인 것
 rules.sub <- subset(rules, subset = rhs %pin% "sex" & lift > 1.3)

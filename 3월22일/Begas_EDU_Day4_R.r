@@ -15,7 +15,6 @@
 # date: "2018.01.09"
 #============================================================
 
-
 #============================================================
 # set directory path
 #============================================================  
@@ -31,7 +30,6 @@
 
 # 데이터 불러오기
 rawdata_df  <- read.csv("3월22일/data.csv", header = TRUE, stringsAsFactors = FALSE, sep = "\t")
-head(rawdata_df)
 
 #============================================================
 # 데이터 탐색 
@@ -74,7 +72,6 @@ library(psych)
 cat("- result : psych package  \n")
 alpha_psych <- psych::alpha(data_mat)
 alpha_psych
-alpha_psych
 
 # check.keys = TRUE 
 cat(" ---------- Positive ---------- ")
@@ -108,7 +105,6 @@ bartlett_result
 KMO_result <- psych::KMO(cor_mat)
 KMO_result
 
-
 #============================================================
 # 요인분석 : 요인 수 결정 
 #============================================================
@@ -131,31 +127,27 @@ eigen_df
 
 
 # plot : 누적 분산 비율
-x11()
-barplot(width = 1, height = eigen_df$cum_prop*100, col = "orange", names = paste0("e", 1:10), ylim = c(0,100), 
+x11();barplot(width = 1, height = eigen_df$cum_prop*100, col = "orange", names = paste0("e", 1:10), ylim = c(0,100), 
         xlab = "the number of factors",  ylab = "proportion of cumulative variance", main = "plot of prop- cumulative variance")
 
 # plot : 개별 분산 비율 
-x11()
-barplot(width = 1, height = eigen_df$prop*100, col = "dodgerblue2", names = paste0("e", 1:10), ylim = c(0,100), 
+x11();barplot(width = 1, height = eigen_df$prop*100, col = "dodgerblue2", names = paste0("e", 1:10), ylim = c(0,100), 
         xlab = "the number of factors",  ylab = "proportion of variance", main = "plot of prop- variance")
 
 
 # 참고 : use ggplot2 package : 누적 분산 plot
 library(ggplot2)
-x11()
-ggplot2::ggplot(eigen_df, aes(x = e_num, y = cum_prop*100)) +
+x11(); ggplot2::ggplot(eigen_df, aes(x = e_num, y = cum_prop*100)) +
   geom_bar(fill = "orange", stat = "identity") + 
-  abs(x = "the number of factors", y = "proportion of cumulative variance", title = "plot of prop- cumulative variance") +
+  labs(x = "the number of factors", y = "proportion of cumulative variance", title = "plot of prop- cumulative variance") +
   scale_x_discrete(limits = 1:10) + 
   coord_cartesian(ylim = c(0, 100)) + 
-  theme_bw()  
+  theme_bw()
 
 
 # 참고 : use factoextra package : 개별 분산 scree plot
 library(factoextra)
-x11()
-factoextra::fviz_eig(prcomp(data_mat, center = T, scale. = T), 
+x11(); factoextra::fviz_eig(prcomp(data_mat, center = T, scale. = T), 
                      main = "Scree Plot(variance)", 
                      barcolor = "#00AFBB", 
                      barfill = "#00AFBB", 
@@ -308,6 +300,7 @@ str(heart)
 dim(heart)
 head(heart)
 summary(heart)
+
 # sbp: systolic blood pressure
 # tobacco: cumulative tobacco (kg)
 # ldl: low density lipoprotein cholesterol
@@ -377,7 +370,7 @@ accuracy.qda
 # 군집분석
 ###########################################################################
 
-# install.packages("kohonen", repos='http://cran.us.r-project.org')
+# install.packages("kohonen", repos='http://cran.us.r-project.org') # 별필요없다
 
 options(repr.plot.width = 5, repr.plot.height = 4) #그림 크기 옵션
 

@@ -16,7 +16,7 @@
 
 
 # 데이터 로딩 ----
-df_store <- read.csv("./파일럿프로젝트/JEJU_STORE.csv")
+df_store <- read.csv("./파일럿프로젝트/DATA/JEJU_STORE.csv")
 
 # 데이터 탐색 
 head(df_store)
