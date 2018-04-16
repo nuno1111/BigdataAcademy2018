@@ -3,8 +3,9 @@ land_price <- read.csv("./파일럿프로젝트/DATA/제주특별자치도_서�
 
 ############################# 제주도 날씨 예측 #############################
 
-poi <- read.csv("./파일럿프로젝트/DATA/제주특별자치도_2015년_제주도_장소_POI데이터_파일_2번_최종_.csv")
+poi <- read.csv("./DATA/제주특별자치도_2015년_제주도_장소_POI데이터_파일_2번_최종_.csv", fileEncoding =  "euc-kr", header = TRUE)
 
+# install.packages("sqldf")
 library(sqldf)
 
 colnames(poi) <- c("ID","X","Y","TYPE","NAME","TEL","TEL2","FAX","ADDR","NEW_ADDR")
@@ -46,7 +47,7 @@ poi <- cbind(poi, coord[,c("utmk_long","utmk_lat")])
 ############################# 300 GRID 격자에서 ID별 위경도 추출 #############################
 
 library(rgdal)
-lnd <- readOGR(dsn = "./파일럿프로젝트/GIS", layer = "PCELL_ID_300") # GIS SHP 파일 로딩
+lnd <- readOGR(dsn = "./GIS", layer = "PCELL_ID_300") # GIS SHP 파일 로딩
 
 lnd_data <- lnd@data
 
@@ -61,14 +62,15 @@ lnd_data <- cbind(lnd_data,result)
 
 ############################# STORE 데이터에 ID_300 매핑 #############################
 
+
 library(sqldf)
+# install.packages("data.table")
 library(data.table)
 
 lnd_table <- data.table(lnd_data)
 setkey(lnd_table,utmk_long,utmk_lat)
 
-poi_id <- sqldf
-("
+poi_id <- sqldf("
      SELECT 
      A.*,B.ID_300 
      FROM poi A 
@@ -83,6 +85,12 @@ str(poi_id)
 plot(poi_id$X,poi_id$Y,col = poi_id$TYPE,cex = .3)
 
 ############################# STORE 데이터에 ID_300 매핑 #############################
+
+write.csv(poi_id,'./DATA/POI_WITH_ID300')
+
+
+
+
 
 
 

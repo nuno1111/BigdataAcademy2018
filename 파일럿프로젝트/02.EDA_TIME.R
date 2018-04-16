@@ -1,6 +1,5 @@
 # 데이터 로딩 ----
-df_time <- read.csv("./TIME/TIME_300.csv")
-
+df_time <- read.csv("./TIME/TIME_300_SNOW.csv", fileEncoding = "euc-kr")
 col_names <- c(
   "YYYYMM"
   ,"ID_300"
@@ -45,8 +44,17 @@ library(reshape)
 df_time_pivot <- melt(df_time, id.vars = c("YYYYMM","ID_300")) # 데이터 PIVOT
                         
 head(df_time_pivot)
+tail(df_time_pivot)
 str(df_time_pivot)
 summary(df_time_pivot)
+write.csv(df_time_pivot,"./DATA/DF_TIME_SNOW_PIVOT.csv")
+
+############################################################################################################
+
+test <- sqldf("select * from df_time_pivot where YYYYMM = '201406' AND ID_300 = '1000032645'")
+head(test)
+plot(test$variable, test$value)
+
 
 library(sqldf)
 avg_by_time <- sqldf("SELECT YYYYMM,variable as Time, AVG(value) as value FROM df_time_pivot GROUP BY YYYYMM,variable") 
