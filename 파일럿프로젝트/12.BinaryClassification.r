@@ -50,11 +50,17 @@ dataset_poi_land[dataset_poi_land$VALUE > qt,]$LABEL = 1
 dataset_poi_land$YYYYMM <- as.factor(dataset_poi_land$YYYYMM)
 dataset_poi_land$HOUR <- as.factor(dataset_poi_land$HOUR)
 
-# 임시 sampling 10%
+# sampling 10%
 set.seed(1234)  # seed 고정
-idx <- sample(1:nrow(dataset_poi_land), nrow(dataset_poi_land) * 0.1)
-dataset_poi_land_sample <- dataset_poi_land[idx, ]
+# idx <- sample(1:nrow(dataset_poi_land), nrow(dataset_poi_land) * 0.1)
+# dataset_poi_land_sample <- dataset_poi_land[idx, ]
 
+dataset_poi_land_good = dataset_poi_land[dataset_poi_land$LABEL == 1,]
+dataset_poi_land_bad = dataset_poi_land[dataset_poi_land$LABEL == 0,]
+
+idx <- sample(1:nrow(dataset_poi_land_bad), nrow(dataset_poi_land_good))
+dataset_poi_land_bad <- dataset_poi_land_bad[idx, ]
+dataset_poi_land_sample <- rbind(dataset_poi_land_bad,dataset_poi_land_good)
 # dataset생성
 dataset <- dataset_poi_land_sample[,c(-1,-2,-7,-8,-9)]
 
@@ -136,6 +142,9 @@ minMax <- seq(min(sample1, sample2), max(sample1, sample2), length.out=length(sa
 x0 <- minMax[which( abs(cdf1(minMax) - cdf2(minMax)) == max(abs(cdf1(minMax) - cdf2(minMax))) )] 
 y0 <- cdf1(x0) 
 y1 <- cdf2(x0) 
+
+ks_d_value <- (y1[1] - y0[1])
+ks_d_value
 
 library(ggplot2)
 ggplot(dat, aes(x = KSD, group = group, color = group))+
