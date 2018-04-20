@@ -1,7 +1,7 @@
 #### Classfication ####
 # DataSet Loading
 dataset_poi <- read.csv("./DATA/DATASET_POI.csv")
-
+head(dataset_poi)
 
 # 임시 sampling 10%
 set.seed(1234)  # seed 고정
@@ -46,6 +46,19 @@ test_df <- dataset_poi[-idx, ]  # test set 분할
 # plot(cv.trees)
 
 # Decision Tree : 버리자...
+
+#### Decision Tree(rpart) ####
+# install.packages("tree")
+library(rpart)
+(treemod <- rpart(LABEL~. , data=train_df))
+plot(treemod)
+text(treemod)
+
+# cv.trees<-cv.tree(treemod, FUN=prune.misclass ) # for classification decision tree
+# plot(cv.trees)
+
+# Decision Tree : 버리자...
+
 
 #### RandomForest Tree ####
 # install.packages("randomForest")
