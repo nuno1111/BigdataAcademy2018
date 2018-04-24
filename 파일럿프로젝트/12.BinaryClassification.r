@@ -1,42 +1,7 @@
 #################### 데이터로딩 ####################
-dataset_poi_land_origin <- read.csv("./DATA/DATASET_POI_LAND.csv")
+# dataset_poi_land_origin <- read.csv("./DATA/DATASET_POI_LAND.csv")
+dataset_poi_land_origin <- read.csv("./DATA/DATASET_POI_LAND_IMPUTED.csv")
 dataset_poi_land <- dataset_poi_land_origin
-
-#################### 결측치 처리 ####################
-# library(rgdal)
-# lnd_gis <- readOGR(dsn = "./GIS", layer = "PCELL_ID_300") # GIS SHP 파일 로딩
-# lnd_data <- lnd_gis@data
-# 
-# # ID_300 별 X,Y좌표만 추출하여 매핑
-# t1 <- lapply(lnd_gis@polygons, function(x){x@Polygons[[1]]@coords[1,]})
-# t2 <- unlist(t1) # vector
-# t3 <- matrix(t2, ncol = 2, byrow = T) # matrix
-# result <- as.data.frame(t3) # data.frame
-# colnames(result) <- c("utmk_long","utmk_lat")
-# 
-# lnd_data <- cbind(lnd_data,result)
-# 
-# library(data.table)
-# lnd_table <- data.table(lnd_data)
-# lnd_table
-# setkey("ID_300")
-# 
-# # 위경도 결합
-# library(sqldf)
-# dataset_poi_land <- sqldf("
-#   SELECT A.*,B.utmk_long,B.utmk_lat
-#   FROM dataset_poi_land A 
-#   LEFT OUTER JOIN lnd_data B
-#   ON A.ID_300 = B.ID_300
-# ")
-# 
-# 
-# head(dataset_poi_land)
-
-# 결측치 메꾸려다가 어차피 데이터 많으니깐 결측치 제거..
-dataset_poi_land <- dataset_poi_land[!is.na(dataset_poi_land$land_price),]
-dataset_poi_land <- dataset_poi_land[!is.na(dataset_poi_land$land_type),]
-
 
 #################### 데이터셋 생성 #################
 
@@ -55,6 +20,7 @@ set.seed(1234)  # seed 고정
 # idx <- sample(1:nrow(dataset_poi_land), nrow(dataset_poi_land) * 0.1)
 # dataset_poi_land_sample <- dataset_poi_land[idx, ]
 
+# 우량은 전부다 불량 1/9로 1:1로 데이터 맞추어서..
 dataset_poi_land_good = dataset_poi_land[dataset_poi_land$LABEL == 1,]
 dataset_poi_land_bad = dataset_poi_land[dataset_poi_land$LABEL == 0,]
 
@@ -63,6 +29,8 @@ dataset_poi_land_bad <- dataset_poi_land_bad[idx, ]
 dataset_poi_land_sample <- rbind(dataset_poi_land_bad,dataset_poi_land_good)
 # dataset생성
 dataset <- dataset_poi_land_sample[,c(-1,-2,-7,-8,-9)]
+
+# write.csv(dataset, "/home/nuno1026/DATASET_BINARYCLASSFICATION.csv", row.names=FALSE)
 
 #################### 7:3 ####################
 idx <- sample(1:nrow(dataset), nrow(dataset)*0.7)
@@ -74,10 +42,13 @@ log_model <- glm(factor(LABEL) ~ ., data = train, family = "binomial")
 summary(log_model)
 
 #################### Confusion Matrix ####################
-pre <- predict(log_model,test[,-27],type="response")
-head(pre)
-cut <- ifelse(pre >= 0.5, 1, 0) ## 절단값 0.5로 설정
-result <- table(test$LABEL,cut)
+# pre <- predict(log_model,test[,-27],type="response")
+# cut <- ifelse(pre >= 0.5, 1, 0) ## 절단값 0.5로 설정
+# result <- table(test$LABEL,cut)
+
+pre_all <- predict(log_model,dataset_poi_land,type="response")
+cut <- ifelse(pre_all >= 0.5, 1, 0) ## 절단값 0.5로 설정
+result <- table(dataset_poi_land$LABEL,cut)
 
 # 정확도
 accuracy <- (result[1, 1] + result[2, 2]) / sum(result) * 100
@@ -90,7 +61,8 @@ specificity
 #################### ROC ####################
 
 library(ROCR)
-pr <- prediction(pre, test$LABEL)
+# pr <- prediction(pre, test$LABEL)
+pr <- prediction(pre_all, dataset_poi_land$LABEL)
 prf <- performance(pr, measure = "tpr", x.measure = "fpr")
 plot(prf)
 
@@ -114,9 +86,19 @@ auc
 # 비슷하게 나오넹...
 
 #################### SCORE ####################
-test$score <- round(pre*1000,0)
+dataset_poi_land$score <- round(pre_all*1000,0)
 # dataset_all$score <- round(pre_all*1000,0)
 
+# 명목형 y값 만들기
+qt <- quantile(dataset_poi_land$score,  c(.125,.250,.375,.5,.625,.750,.875))
+qt <- c(-Inf,qt,Inf)
+dataset_poi_land$GRADE <- cut(dataset_poi_land$score, breaks = qt, labels = c(1:8)) # VALUE를 명목형 변수로 변경
+
+#################### save result ####################
+hist(dataset_poi_land$score)
+
+dataset_all <- dataset_poi_land[,c(-1)]
+# write.csv(dataset_all, "/home/nuno1026/PREDICT_RESULT.csv", row.names=FALSE)
 #################### K-S ####################
 ks.test(test$score,test$LABEL)
 # ks.test(dataset_all$score,dataset_all$LABEL)

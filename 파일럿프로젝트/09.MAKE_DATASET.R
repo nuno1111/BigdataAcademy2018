@@ -97,11 +97,3 @@ dataset[is.na(dataset)] <- 0 # 결측치 0으로 대체
 
 
 
-
-
-
-
-
-
-
-

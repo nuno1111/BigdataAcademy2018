@@ -50,11 +50,22 @@ id_300_type_kmeans <- kmeans(id_300_type_prc_df,centers = 8, iter.max = 1000) # 
 
 id_300_type_prc_df$cluster <- as.factor(id_300_type_kmeans$cluster) # 군집결과를 변수로 추가
 
+# 군집간 순위 매기기 
+temp <- as.data.frame(id_300_type_kmeans$centers)
+temp$std <- (-2) * temp$pc1  + (-1) * temp$pc2
+temp[order(temp$std,decreasing = T),]
+
+grade <- as.data.frame(cbind(order(temp$std,decreasing = T), c("A","B","C","D","E","F","G","H")))
+colnames(grade) <- c("cluster","GRADE")
+
+id_300_type <- cbind(id_300_type, id_300_type_prc_df)
+id_300_type <- merge(id_300_type,grade)
+plot(id_300_type$pc1, id_300_type$pc2, col = id_300_type$GRADE)
+
 # install.packages("caret")
 library(caret)
-qplot(pc1,pc2, colour = cluster, data = id_300_type_prc_df)
+qplot(pc1,pc2, colour = GRADE, data = id_300_type)
 
-
-
+# write.csv(id_300_type, "/home/nuno1026/CLUSTER_RESULT.csv", row.names=FALSE)
 
 

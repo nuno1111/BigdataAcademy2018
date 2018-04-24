@@ -1,4 +1,5 @@
 #### 개별공시지가 정보 로딩 ####
+# rm(list = ls());gc();
 library(rgdal)
 lnd <- readOGR(dsn = "./DATA/AL_50", layer = "AL_50_D150_20160921", encoding = "euc-kr") # GIS SHP 파일 로딩
 
@@ -66,6 +67,8 @@ library(data.table)
 lnd_table <- data.table(lnd_data)
 setkey(lnd_table,utmk_long,utmk_lat)
 
+# write.csv(dataset,"./DATA/DATASET_LAND.csv")
+
 dataset_id <- sqldf("
       SELECT 
         A.*,B.ID_300 
@@ -74,22 +77,46 @@ dataset_id <- sqldf("
       ON A.utmk_long >= B.utmk_long 
       AND A.utmk_long < B.utmk_long+300 
       AND A.utmk_lat >= B.utmk_lat
-      AND A.utmk_lat < B.utmk_lat+300  
+      AND A.utmk_lat < B.utmk_lat+300
     ")
 
+#### 결측치 채우기 ####
+dataset_id = read.csv("./DATA/DATASET_POI_FOR_IMPUTE.csv")
+library(DMwR)
+tmp <- dataset_id[,-1]
+
+anyNA(tmp)
+knnOutput <- knnImputation(tmp)  # perform knn imputation.
+anyNA(knnOutput)
+
+dataset_id[is.na(dataset_id$land_price),]$land_price <- knnOutput[is.na(dataset_id$land_price),]$land_price
+dataset_id[is.na(dataset_id$land_price),]$land_type <- knnOutput[is.na(dataset_id$land_price),]$land_type
+anyNA(dataset_id)
+
+# write.csv(dataset_id,"./DATA/DATASET_LAND_IMPUTE.csv")
 
 #### 기존데이터 JOIN ####
 dataset_poi <- read.csv("./DATA/DATASET_POI.csv")
 
+# dataset_poi_land <- sqldf("
+#   SELECT 
+#     A.*, 
+#     B.land_price,
+#     B.land_type
+#   FROM dataset_poi A
+#   LEFT OUTER JOIN 
+#   (
+#     SELECT ID_300, MAX(land_type) as LAND_TYPE, AVG(land_price) as LAND_PRICE FROM dataset_id GROUP BY ID_300
+#   )B
+#   ON A.ID_300 = B.ID_300
+# ")
+
 dataset_poi_land <- sqldf("
-  SELECT 
-    A.*, 
+  SELECT
+    A.*,
     B.land_price,
     B.land_type
   FROM dataset_poi A
-  LEFT OUTER JOIN 
-  (
-    SELECT ID_300, MAX(land_type) as LAND_TYPE, AVG(land_price) as LAND_PRICE FROM dataset_id GROUP BY ID_300
-  )B
+  LEFT OUTER JOIN dataset_idB
   ON A.ID_300 = B.ID_300
 ")
