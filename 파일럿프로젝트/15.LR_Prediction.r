@@ -1,6 +1,7 @@
 #################### 데이터로딩 ####################
-dataset_poi_land_origin <- read.csv("./DATA/DATASET_POI_LAND_IMPUTED.csv")
-dataset_poi_land <- dataset_poi_land_origin
+# dataset_poi_land_origin <- read.csv("./DATA/DATASET_POI_LAND_IMPUTED.csv")
+dataset_poi_land_origin <- read.csv("~/DATASET_POI_LAND_IMPUTED_2.csv", stringsAsFactors = FALSE)
+dataset_poi_land <- dataset_poi_land_origin 
 
 #################### 데이터셋 생성 #################
 
@@ -13,6 +14,9 @@ dataset_poi_land[dataset_poi_land$VALUE > qt,]$LABEL = 1
 # factor 설정
 dataset_poi_land$YYYYMM <- as.factor(dataset_poi_land$YYYYMM)
 dataset_poi_land$HOUR <- as.factor(dataset_poi_land$HOUR)
+dataset_poi_land[is.na(dataset_poi_land$land_type),]$land_type = ""
+dataset_poi_land$land_type <- as.factor(dataset_poi_land$land_type)
+
 
 # sampling 10%
 set.seed(1234)  # seed 고정
@@ -42,21 +46,19 @@ log_model <- glm(factor(LABEL) ~ ., data = train, family = "binomial")
 ################################### 여기까지 기존코드 ###################################
 #### 예측 ####
 
-last24 <- read.csv("~/DATASET_LAST.csv",fileEncoding = "utf-8")
-
+last24 <- read.csv("~/DATASET_LAST_24_2.csv",fileEncoding = "utf-8", stringsAsFactors = FALSE)
 last24_temp <- last24
 
-head(last24_temp)
 colnames(last24_temp) <- c("YYYYMM","HOUR","IS_HOLIDAY","WEATHER","ID_300","공공기관","공사중명칭",
                        "공원.산.동.식물원","관광.숙박","교육기관","교통시설","금융기관","기업","농공시설",
                        "도로시설","레져.스포츠","문화.종교.예술","쇼핑.편의","언론기관",
                        "음식점","의료.복지","자동차관련","주택관련","지명관련","치안기관",         
                        "land_price","land_type")
 
-str(last24_temp)
-
 last24_temp$YYYYMM <- as.factor(last24_temp$YYYYMM)
 last24_temp$HOUR <- as.factor(last24_temp$HOUR)
+last24_temp[is.na(last24_temp$land_type),]$land_type = ""
+last24_temp$land_type <- as.factor(last24_temp$land_type)
 
 pre_all <- predict(log_model,last24_temp,type="response")
 
@@ -67,5 +69,5 @@ last24_temp$score <- round(pre_all*1000,0)
 qt <- quantile(last24_temp$score,  c(.125,.250,.375,.5,.625,.750,.875))
 qt <- c(-Inf,qt,Inf)
 last24_temp$GRADE <- cut(last24_temp$score, breaks = qt, labels = c(1:8)) # VALUE를 명목형 변수로 변경
-write.csv(last24_temp, "~/LR_RESULT.csv", row.names = FALSE)
+write.csv(last24_temp, "~/LR_RESULT_2.csv", row.names = FALSE)
 

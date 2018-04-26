@@ -120,7 +120,7 @@ step(direction='backward',logistic.fit)
 
 # 분류표
 pred_sex <- predict(logistic.fit, newdata = data[, -1], type = "response")
-
+pred_sex
 cut <- ifelse(pred_sex >= 0.5, 2, 1) ## 절단값 0.5로 설정
 result <- table(data$sex, cut)
 

@@ -1,11 +1,16 @@
 #install.packages("dplyr")
 library(dplyr)
 #rm(list = ls())
-df <- read.csv("./DATA/DATASET_POI_LAND_IMPUTED.csv",fileEncoding = "utf-8")
+# df <- read.csv("./DATA/DATASET_POI_LAND_IMPUTED.csv",fileEncoding = "utf-8")
+df <- read.csv("~/DATASET_POI_LAND_IMPUTED_2.csv",fileEncoding = "utf-8", stringsAsFactors = FALSE)
+
 
 # 연월, ID를 범주형 변수로 처리합니다.
 df$YYYYMM <- as.factor(df$YYYYMM) 
 df$ID_300 <- as.factor(df$ID_300) 
+df[is.na(df$land_type),]$land_type = ""
+df$land_type <- as.factor(df$land_type)
+
 
 # 데이터셋 축소하기 신공
 # 1. 시각을 9 ~ 18 시로 제한
@@ -33,7 +38,7 @@ df_opt <- df %>%
          지명관련,
          치안기관,
          land_price,
-         land_type,) %>% 
+         land_type) %>% 
   arrange(ID_300, YYYYMM, HOUR)
 
 # 밑에 쿼리문 돌릴때 신택스 에러를 방지하기 위해 영문으로 리네임
@@ -272,7 +277,7 @@ mean(pred == y.test)
 ################################### 여기까지 기존코드 ###################################
 #### 예측 ####
 
-last <- read.csv("./DATA/DATASET_LAST.csv",fileEncoding = "utf-8")
+last <- read.csv("./DATA/DATASET_LAST_2.csv",fileEncoding = "utf-8", stringsAsFactors = FALSE)
 
 # substr(YM,5,2) as YM,
 last$YM <- sapply(last$YM, toString)
@@ -289,10 +294,13 @@ last <- transform(last, WEATHER = ifelse(WEATHER == "SNOW",1,
                                                       ifelse(WEATHER == "RAIN",3,4))))
 last$WEATHER <- as.factor(last$WEATHER)
 
+last[is.na(last$land_type),]$land_type = ""
+last$land_type <- as.factor(last$land_type)
+
 #예측
 pred_last<-predict(fit.rf,last)
 result <- last
 
 result$PREDICT <- pred_last
-write.csv(result, "./DATA/RESULT.csv", row.names = FALSE)
+write.csv(result, "~/RF_RESULT_2.csv", row.names = FALSE)
 

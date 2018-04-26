@@ -1,5 +1,6 @@
 #### 개별공시지가 정보 로딩 ####
 # rm(list = ls());gc();
+
 library(rgdal)
 lnd <- readOGR(dsn = "./DATA/AL_50", layer = "AL_50_D150_20160921", encoding = "euc-kr") # GIS SHP 파일 로딩
 
@@ -12,10 +13,12 @@ t <- as.data.frame(t3) # data.frame
 colnames(t) <- c("long","lat")
 
 land_type <- lnd$A12
-land_price <- lnd$A13
+# land_price <- lnd$A13
+land_price <- lnd$A9
 
 dataset <- data.frame(t,land_type,land_price)
 dataset <- dataset[!is.na(dataset$land_type),] # 결측치 제거
+
 
 #### 좌표변환 #####
 library(sp)
@@ -60,7 +63,7 @@ colnames(result) <- c("utmk_long","utmk_lat")
 
 lnd_data <- cbind(lnd_data,result)
 
-############################# STORE 데이터에 ID_300 매핑 #############################
+############################# 데이터에 ID_300 매핑 #############################
 library(sqldf)
 library(data.table)
 
@@ -80,36 +83,8 @@ dataset_id <- sqldf("
       AND A.utmk_lat < B.utmk_lat+300
     ")
 
-#### 결측치 채우기 ####
-dataset_id = read.csv("./DATA/DATASET_POI_FOR_IMPUTE.csv")
-library(DMwR)
-tmp <- dataset_id[,-1]
-
-anyNA(tmp)
-knnOutput <- knnImputation(tmp)  # perform knn imputation.
-anyNA(knnOutput)
-
-dataset_id[is.na(dataset_id$land_price),]$land_price <- knnOutput[is.na(dataset_id$land_price),]$land_price
-dataset_id[is.na(dataset_id$land_price),]$land_type <- knnOutput[is.na(dataset_id$land_price),]$land_type
-anyNA(dataset_id)
-
-# write.csv(dataset_id,"./DATA/DATASET_LAND_IMPUTE.csv")
-
 #### 기존데이터 JOIN ####
 dataset_poi <- read.csv("./DATA/DATASET_POI.csv")
-
-# dataset_poi_land <- sqldf("
-#   SELECT 
-#     A.*, 
-#     B.land_price,
-#     B.land_type
-#   FROM dataset_poi A
-#   LEFT OUTER JOIN 
-#   (
-#     SELECT ID_300, MAX(land_type) as LAND_TYPE, AVG(land_price) as LAND_PRICE FROM dataset_id GROUP BY ID_300
-#   )B
-#   ON A.ID_300 = B.ID_300
-# ")
 
 dataset_poi_land <- sqldf("
   SELECT
@@ -117,6 +92,53 @@ dataset_poi_land <- sqldf("
     B.land_price,
     B.land_type
   FROM dataset_poi A
-  LEFT OUTER JOIN dataset_idB
+  LEFT OUTER JOIN
+  (
+    SELECT ID_300, MAX(land_type) as LAND_TYPE, AVG(land_price) as LAND_PRICE FROM dataset_id GROUP BY ID_300
+  )B
   ON A.ID_300 = B.ID_300
 ")
+
+#### 추가된 내용 ####
+dataset_impute = read.csv("./DATA/DATASET_POI_FOR_IMPUTE.csv")
+land <- read.csv("~/LAND.csv")
+land$land_price <- dataset$land_price
+
+library(sqldf)
+land_avg <- sqldf("SELECT ID_300, MAX(land_type) as LAND_TYPE, AVG(land_price) as LAND_PRICE FROM land GROUP BY ID_300")
+dataset_impute2 <- sqldf("SELECT A.ID_300, A.utmk_long, A.utmk_lat, B.land_price, B.land_type  FROM dataset_impute A LEFT OUTER JOIN land_avg B ON A.ID_300 = B.ID_300 ")
+
+#### 결측치 채우기 ####
+
+# dataset_poi_land_imputed2 = read.csv("~/DATASET_POI_LAND_IMPUTED_2.csv")
+# dataset_poi_land4 = read.csv("~/DATASET_POI_LAND4.csv")
+
+cor(dataset_poi_land_imputed2$land_price,dataset_poi_land_imputed2$VALUE)
+
+# anyNA(dataset_impute)
+# str(dataset_impute)
+
+library(DMwR)
+# tmp <- dataset_id[,-1]
+tmp <- dataset_impute2[,-1]
+tmp$LAND_TYPE <- as.factor(tmp$LAND_TYPE)
+knnOutput <- knnImputation(tmp)  # perform knn imputation.
+
+# dataset_id[is.na(dataset_id$land_price),]$land_price <- knnOutput[is.na(dataset_id$land_price),]$land_price
+# dataset_id[is.na(dataset_id$land_price),]$land_type <- knnOutput[is.na(dataset_id$land_price),]$land_type
+
+dataset_impute2[is.na(dataset_impute2$LAND_PRICE),]$LAND_PRICE <- knnOutput[is.na(dataset_impute2$LAND_PRICE),]$LAND_PRICE
+dataset_impute2[is.na(dataset_impute2$LAND_PRICE),]$LAND_TYPE <- knnOutput[is.na(dataset_impute2$LAND_PRICE),]$LAND_TYPE
+
+
+# write.csv(dataset_impute2, "~/LAND_3.csv", row.names = F)
+
+# dataset_poi_land <- sqldf("
+#   SELECT
+#     A.*,
+#     B.land_price,
+#     B.land_type
+#   FROM dataset_poi A
+#   LEFT OUTER JOIN dataset_id B
+#   ON A.ID_300 = B.ID_300
+# ")
