@@ -55,7 +55,7 @@ temp <- as.data.frame(id_300_type_kmeans$centers)
 temp$std <- (-2) * temp$pc1  + (-1) * temp$pc2
 temp[order(temp$std,decreasing = T),]
 
-grade <- as.data.frame(cbind(order(temp$std,decreasing = T), c("A","B","C","D","E","F","G","H")))
+grade <- as.data.frame(cbind(order(temp$std,decreasing = T), c("A.관광특수","B.관광일반","C.주거일반","D.주거밀집","E.공공일반","F.공공밀집","G.상업일반","H.상업특수")))
 colnames(grade) <- c("cluster","GRADE")
 
 id_300_type <- cbind(id_300_type, id_300_type_prc_df)
@@ -64,7 +64,7 @@ plot(id_300_type$pc1, id_300_type$pc2, col = id_300_type$GRADE)
 
 # install.packages("caret")
 library(caret)
-qplot(pc1,pc2, colour = GRADE, data = id_300_type)
+qplot(pc1,pc2, colour = GRADE, data = id_300_type, xlab = "도심접근성", ylab = "관광접근성")
 
 # write.csv(id_300_type, "/home/nuno1026/CLUSTER_RESULT.csv", row.names=FALSE)
 
